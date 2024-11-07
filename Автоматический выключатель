@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электротехнический Калькулятор</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+        body { display: flex; flex-direction: column; align-items: center; background: #f2f6fa; min-height: 100vh; padding: 20px; color: #333; }
+        h1 { font-size: 2.2em; color: #34495e; margin-bottom: 20px; text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1); }
+
+        .panel, .selected-list, .result-panel {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .panel:hover, .selected-list:hover, .result-panel:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .button, .reset-button {
+            padding: 10px 24px;
+            font-size: 1em;
+            cursor: pointer;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            transition: background 0.3s, transform 0.3s ease;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .button { background-color: #3498db; }
+        .button:hover { background-color: #2980b9; transform: translateY(-3px); }
+
+        .reset-button { background-color: #e74c3c; }
+        .reset-button:hover { background-color: #c0392b; transform: translateY(-3px); }
+
+        .device-list, .selected-list { display: flex; flex-wrap: wrap; justify-content: center; }
+        
+        .device {
+            background: #ecf0f1;
+            border-radius: 12px;
+            padding: 10px 15px;
+            margin: 5px;
+            width: 140px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s, transform 0.2s ease;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .device:hover { background-color: #d1e6f1; transform: translateY(-3px); }
+
+        .device.selected { background-color: #82c4e8; color: #fff; }
+
+        .count-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #2c3e50;
+            color: #fff;
+            padding: 3px 7px;
+            border-radius: 50%;
+            font-size: 0.8em;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            animation: pop 0.3s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        #result {
+            font-size: 1.3em;
+            color: #34495e;
+            margin-top: 20px;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <h1>Электротехнический Калькулятор</h1>
+
+    <button class="button" onclick="toggleDevicePanel()">Выбор прибора</button>
+
+    <div id="devicePanel" class="panel hidden">
+        <h3>Выберите приборы:</h3>
+        <div class="device-list" id="deviceList">
+            <div class="device" onclick="addDevice('Холодильник', 200)">Холодильник (200 Вт)</div>
+            <div class="device" onclick="addDevice('Телевизор', 200)">Телевизор (200 Вт)</div>
+            <div class="device" onclick="addDevice('Компьютер', 400)">Компьютер (400 Вт)</div>
+            <div class="device" onclick="addDevice('Чайник', 2000)">Чайник (2000 Вт)</div>
+            <div class="device" onclick="addDevice('Плойка', 100)">Плойка (100 Вт)</div>
+            <div class="device" onclick="addDevice('Пароварка', 1200)">Пароварка (1200 Вт)</div>
+            <div class="device" onclick="addDevice('Микроволновка', 1300)">Микроволновка (1300 Вт)</div>
+            <div class="device" onclick="addDevice('Стиральная машина', 2000)">Стиральная машина (2000 Вт)</div>
+            <div class="device" onclick="addDevice('Утюг', 2000)">Утюг (2000 Вт)</div>
+            <div class="device" onclick="addDevice('Фен', 1500)">Фен (1500 Вт)</div>
+            <div class="device" onclick="addDevice('Пылесос', 1500)">Пылесос (1500 Вт)</div>
+            <div class="device" onclick="addDevice('Кофемашина', 1000)">Кофемашина (1000 Вт)</div>
+            <div class="device" onclick="addDevice('Электроплита', 3000)">Электроплита (3000 Вт)</div>
+            <div class="device" onclick="addDevice('Духовка', 2500)">Духовка (2500 Вт)</div>
+            <div class="device" onclick="addDevice('Миксер', 700)">Миксер (700 Вт)</div>
+            <div class="device" onclick="addDevice('Блендер', 500)">Блендер (500 Вт)</div>
+            <div class="device" onclick="addDevice('Посудомойка', 1400)">Посудомоечная машина (1400 Вт)</div>
+            <div class="device" onclick="addDevice('Кондиционер', 2000)">Кондиционер (2000 Вт)</div>
+            <div class="device" onclick="addDevice('Бойлер', 2500)">Электрический бойлер (2500 Вт)</div>
+            <div class="device" onclick="addDevice('Обогреватель', 2000)">Обогреватель (2000 Вт)</div>
+            <div class="device" onclick="addDevice('Электрогриль', 1750)">Электрогриль (1750 Вт)</div>
+            <div class="device" onclick="addDevice('Тостер', 1200)">Тостер (1200 Вт)</div>
+            <div class="device" onclick="addDevice('Электродуховка', 2000)">Электродуховка (2000 Вт)</div>
+            <div class="device" onclick="addDevice('Мясорубка', 1000)">Мясорубка (1000 Вт)</div>
+            <div class="device" onclick="addDevice('Игровая приставка', 200)">Игровая приставка (200 Вт)</div>
+            <div class="device" onclick="addDevice('Осушитель воздуха', 400)">Осушитель воздуха (400 Вт)</div>
+            <div class="device" onclick="addDevice('Увлажнитель воздуха', 40)">Увлажнитель воздуха (40 Вт)</div>
+            <div class="device" onclick="addDevice('Вентилятор', 75)">Вентилятор (75 Вт)</div>
+        </div>
+        <button class="reset-button" onclick="resetSelection()">Сбросить выбор</button>
+    </div>
+
+    <div class="selected-list panel">
+        <h3>Выбранные приборы:</h3>
+        <div id="selectedDevices"></div>
+        <p id="totalPower">Общая мощность: 0 Вт</p>
+    </div>
+
+    <button class="button" onclick="calculate()">Рассчитать</button>
+
+    <div id="result" class="result-panel panel"></div>
+
+    <script>
+        const selectedDevices = {};
+        const K_isp = 1;
+        const K_zapas = 1.1;
+        const voltage = 220;
+
+        function toggleDevicePanel() {
+            document.getElementById('devicePanel').classList.toggle('hidden');
+        }
+
+        function addDevice(name, power) {
+            if (!selectedDevices[name]) selectedDevices[name] = { power, count: 0 };
+            selectedDevices[name].count += 1;
+            updateSelectedDevices();
+            updateDeviceList();
+        }
+
+        function updateSelectedDevices() {
+            const selectedDevicesDiv = document.getElementById('selectedDevices');
+            selectedDevicesDiv.innerHTML = '';
+            let totalPower = 0;
+            for (const device in selectedDevices) {
+                const { power, count } = selectedDevices[device];
+                totalPower += power * count;
+                const div = document.createElement('div');
+                div.textContent = `${device} - ${power} Вт × ${count} шт.`;
+                selectedDevicesDiv.appendChild(div);
+            }
+            document.getElementById('totalPower').textContent = `Общая мощность: ${totalPower} Вт`;
+        }
+
+        function updateDeviceList() {
+            const deviceList = document.getElementById('deviceList').children;
+            for (const deviceDiv of deviceList) {
+                const deviceName = deviceDiv.textContent.split(' ')[0];
+                if (selectedDevices[deviceName]) {
+                    deviceDiv.classList.add('selected');
+                    let badge = deviceDiv.querySelector('.count-badge');
+                    if (!badge) {
+                        badge = document.createElement('div');
+                        badge.className = 'count-badge';
+                        deviceDiv.appendChild(badge);
+                    }
+                    badge.textContent = selectedDevices[deviceName].count;
+                } else {
+                    deviceDiv.classList.remove('selected');
+                    const badge = deviceDiv.querySelector('.count-badge');
+                    if (badge) badge.remove();
+                }
+            }
+        }
+
+        function resetSelection() {
+            for (let device in selectedDevices) delete selectedDevices[device];
+            updateSelectedDevices();
+            updateDeviceList();
+        }
+
+        function calculate() {
+            const totalPower = Object.values(selectedDevices).reduce((sum, { power, count }) => sum + power * count, 0);
+            const current = (totalPower * K_isp * K_zapas) / voltage;
+            const breakerRating = Math.ceil(current);
+            document.getElementById('result').textContent = `Необходим автоматический выключатель на ${breakerRating} A`;
+        }
+    </script>
+</body>
+</html>
